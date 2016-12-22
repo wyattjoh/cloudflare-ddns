@@ -1,0 +1,19 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "QhYMdplKQJAMptRaHZBB8CF6HdM=",
+			"path": "github.com/cloudflare/cloudflare-go",
+			"revision": "6cfcb7ec3886f434daf8515d14d4ab208cae845c",
+			"revisionTime": "2016-12-21T19:00:05Z"
+		},
+		{
+			"checksumSHA1": "ynJSWoF6v+3zMnh9R0QmmG6iGV8=",
+			"path": "github.com/pkg/errors",
+			"revision": "248dadf4e9068a0b3e79f02ed0a610d935de5302",
+			"revisionTime": "2016-10-29T09:36:37Z"
+		}
+	],
+	"rootPath": "github.com/wyattjoh/cloudflare-ddns"
+}
