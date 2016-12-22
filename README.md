@@ -10,6 +10,16 @@ by overriding the configuration option.
 
 You can run this service in a cron job or a systemd timer, or once, up to you!
 
+## Installation
+
+Install via with the Go toolchain to compile from source:
+
+```
+go get github.com/wyattjoh/cloudflare-ddns
+```
+
+Download pre-compiled binary on the [Releases Page](https://github.com/wyattjoh/cloudflare-ddns/releases/latest) for your Arch/OS.
+
 ## Configuration
 
 Configuration is specified in the environment or as command line arguments.
