@@ -114,14 +114,25 @@ func main() {
 		IPEndpoint = defaultIPEndpoint
 	}
 
+	flags := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+
 	// Define the arguments needed.
-	flag.StringVar(&APIKey, "key", os.Getenv("CF_API_KEY"), "specify the Global (not CA) Cloudflare API Key generated on the \"My Account\" page.")
-	flag.StringVar(&APIEmail, "email", os.Getenv("CF_API_EMAIL"), "Email address associated with your Cloudflare account.")
-	flag.StringVar(&DomainName, "domain", os.Getenv("CF_DOMAIN"), "Domain name in question that you want to update. (i.e. mypage.example.com OR example.com)")
-	flag.StringVar(&IPEndpoint, "ipendpoint", IPEndpoint, "Alternative ip address service endpoint.")
+	flags.StringVar(&APIKey, "key", os.Getenv("CF_API_KEY"), "specify the Global (not CA) Cloudflare API Key generated on the \"My Account\" page.")
+	flags.StringVar(&APIEmail, "email", os.Getenv("CF_API_EMAIL"), "Email address associated with your Cloudflare account.")
+	flags.StringVar(&DomainName, "domain", os.Getenv("CF_DOMAIN"), "Domain name in question that you want to update. (i.e. mypage.example.com OR example.com)")
+	flags.StringVar(&IPEndpoint, "ipendpoint", IPEndpoint, "Alternative ip address service endpoint.")
 
 	// Parse the flags in.
-	flag.Parse()
+	if err := flags.Parse(os.Args[1:]); err != nil {
+		if err == flag.ErrHelp {
+
+			// Error nicely if it was just asking for help.
+			os.Exit(0)
+		}
+
+		// Exit not nicely otherwise.
+		os.Exit(2)
+	}
 
 	record, err := UpdateDomain(APIKey, APIEmail, DomainName, IPEndpoint)
 	if err != nil {
