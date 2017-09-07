@@ -20,6 +20,12 @@ go get github.com/wyattjoh/cloudflare-ddns
 
 Download pre-compiled binary on the [Releases Page](https://github.com/wyattjoh/cloudflare-ddns/releases/latest) for your Arch/OS.
 
+### Installation Via Homebrew
+
+```
+brew install wyattjoh/cloudflare-ddns/cloudflare-ddns
+```
+
 ## Configuration
 
 Configuration is specified in the environment or as command line arguments.
