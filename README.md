@@ -23,7 +23,7 @@ Download pre-compiled binary on the [Releases Page](https://github.com/wyattjoh/
 ### Installation Via Homebrew
 
 ```
-brew install wyattjoh/cloudflare-ddns/cloudflare-ddns
+brew install wyattjoh/stable/cloudflare-ddns
 ```
 
 ## Configuration
