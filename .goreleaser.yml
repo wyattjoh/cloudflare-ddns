@@ -44,3 +44,6 @@ archive:
 
 release:
   disable: true
+  github:
+    owner: wyattjoh
+    name: cloudflare-ddns
