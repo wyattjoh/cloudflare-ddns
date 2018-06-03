@@ -29,7 +29,6 @@ brew:
   folder: Formula
   homepage:  https://github.com/wyattjoh/cloudflare-ddns
   description: Cloudflare Dynamic DNS Updater
-  skip_upload: true
   test: |
     system "#{bin}/cloudflare-ddns -v"
 
