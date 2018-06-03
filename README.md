@@ -1,5 +1,7 @@
 # cloudflare-ddns
 
+[![Build Status](https://travis-ci.org/wyattjoh/cloudflare-ddns.svg?branch=master)](https://travis-ci.org/wyattjoh/cloudflare-ddns)
+
 This was a project designed to explore the [Cloudflare API](https://api.cloudflare.com/)
 through their official [Go Client](https://github.com/cloudflare/cloudflare-go).
 
