@@ -1,0 +1,4 @@
+github.com/cloudflare/cloudflare-go v0.7.2 h1:15GEDUnXGq6W1BubIz3E2Ln+VbPuS8dbVTSnyKWwxkU=
+github.com/cloudflare/cloudflare-go v0.7.2/go.mod h1:8KhU6K+zHUEWOSU++mEQYf7D9UZOcQcibUoSm6vCUz4=
+github.com/pkg/errors v0.8.1-0.20161029093637-248dadf4e906 h1:BKfCEBHnHoXswNe0Btj/zOfiyn40z6qOti8SeLbQgdM=
+github.com/pkg/errors v0.8.1-0.20161029093637-248dadf4e906/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
