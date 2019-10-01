@@ -22,25 +22,27 @@ builds:
       - goos: openbsd
         goarch: arm
 
-brew:
-  github:
-    owner: wyattjoh
-    name: homebrew-stable
-  folder: Formula
-  homepage:  https://github.com/wyattjoh/cloudflare-ddns
-  description: Cloudflare Dynamic DNS Updater
-  test: |
-    system "#{bin}/cloudflare-ddns -v"
+brews:
+  - github:
+      owner: wyattjoh
+      name: homebrew-stable
+    folder: Formula
+    homepage: https://github.com/wyattjoh/cloudflare-ddns
+    description: Cloudflare Dynamic DNS Updater
+    test: |
+      system "#{bin}/cloudflare-ddns -v"
+    install: |
+      bin.install "cloudflare-ddns"
 
-archive:
-  name_template: '{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
-  format: tar.gz
-  format_overrides:
-    - goos: windows
-      format: zip
-  files:
-    - LICENSE.md
-    - README.md
+archives:
+  - name_template: "{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE.md
+      - README.md
 
 release:
   github:
