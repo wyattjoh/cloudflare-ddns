@@ -1,0 +1,11 @@
+[linters]
+  enable-all = true
+  disable = [
+    "lll",
+  ]
+
+[issues]
+    exclude-use-default = true
+    [[issues.exclude-rules]]
+        path = "main.go"
+        text = "Potential HTTP request made with variable url"
