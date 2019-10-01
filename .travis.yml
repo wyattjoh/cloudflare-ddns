@@ -3,13 +3,23 @@ language: go
 go:
   - 1.x
 
+env:
+  global:
+    - GO111MODULE=on
+
 before_install:
   # Install linters and misspell
-  - go get -u github.com/alecthomas/gometalinter
-  - gometalinter --install
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin ${GOLANGCI_LINT_VERSION}
+  - golangci-lint --version
+
+install:
+  - go mod tidy
+  - git diff --exit-code go.mod
+  - git diff --exit-code go.sum
+  - go mod download
 
 script:
-  - go build
+  - golangci-lint run
 
 deploy:
   - provider: script
