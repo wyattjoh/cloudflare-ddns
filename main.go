@@ -23,7 +23,7 @@ func GetRecord(api *cloudflare.API, domainName string) (*cloudflare.DNSRecord, e
 	}
 
 	// Extract the zone name from the domain name. This should be the last two
-	// perioid delimitered strings.
+	// period delimitered strings.
 	zoneName := strings.Join(splitDomainName[len(splitDomainName)-2:], ".")
 
 	// Fetch the zone ID
@@ -68,38 +68,45 @@ func GetCurrentIP(ipEndpoint string) (string, error) {
 
 // UpdateDomain updates a given domain in a zone to match the current ip address
 // of the machine.
-func UpdateDomain(apiKey, apiEmail, domainName, ipEndpoint string) (*cloudflare.DNSRecord, error) {
+func UpdateDomain(apiKey, apiEmail, domainNames, ipEndpoint string) error {
 	// Create the new Cloudflare api client.
 	api, err := cloudflare.New(apiKey, apiEmail)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not create the Cloudflare API client")
-	}
-
-	// Get the record in question.
-	record, err := GetRecord(api, domainName)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not get the DNS record")
+		return errors.Wrap(err, "could not create the Cloudflare API client")
 	}
 
 	// Get our current IP address.
 	newIP, err := GetCurrentIP(ipEndpoint)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not get the current IP address")
+		return errors.Wrap(err, "could not get the current IP address")
 	}
 
-	// Update the DNS record to include the new IP address.
-	record.Content = newIP
+	// Split the domain names by comma, and range over them.
+	splitDomainNames := strings.Split(domainNames, ",")
+	for _, domainName := range splitDomainNames {
+		// Get the record in question.
+		record, err := GetRecord(api, domainName)
+		if err != nil {
+			return errors.Wrap(err, "could not get the DNS record")
+		}
 
-	if err := api.UpdateDNSRecord(record.ZoneID, record.ID, *record); err != nil {
-		return nil, errors.Wrap(err, "could not update the DNS record")
+		// Update the DNS record to include the new IP address.
+		record.Content = newIP
+
+		if err := api.UpdateDNSRecord(record.ZoneID, record.ID, *record); err != nil {
+			return errors.Wrap(err, "could not update the DNS record")
+		}
+
+		// Log the update.
+		fmt.Printf("Updated %s to point to %s\n", record.Name, record.Content)
 	}
 
-	return record, nil
+	return nil
 }
 
 func main() {
 	// Extract the configuration from the environment.
-	var APIKey, APIEmail, DomainName, IPEndpoint string
+	var APIKey, APIEmail, DomainNames, IPEndpoint string
 
 	// Specify a default endpoint if no other one is provided.
 	const defaultIPEndpoint = "https://api.ipify.org/"
@@ -116,7 +123,7 @@ func main() {
 	// Define the arguments needed.
 	flags.StringVar(&APIKey, "key", os.Getenv("CF_API_KEY"), "specify the Global (not CA) Cloudflare API Key generated on the \"My Account\" page.")
 	flags.StringVar(&APIEmail, "email", os.Getenv("CF_API_EMAIL"), "Email address associated with your Cloudflare account.")
-	flags.StringVar(&DomainName, "domain", os.Getenv("CF_DOMAIN"), "Domain name in question that you want to update. (i.e. mypage.example.com OR example.com)")
+	flags.StringVar(&DomainNames, "domain", os.Getenv("CF_DOMAIN"), "Comma separated domain names that should be updated. (i.e. mypage.example.com OR example.com)")
 	flags.StringVar(&IPEndpoint, "ipendpoint", IPEndpoint, "Alternative ip address service endpoint.")
 
 	// Parse the flags in.
@@ -130,12 +137,8 @@ func main() {
 		os.Exit(2)
 	}
 
-	record, err := UpdateDomain(APIKey, APIEmail, DomainName, IPEndpoint)
-	if err != nil {
+	if err := UpdateDomain(APIKey, APIEmail, DomainNames, IPEndpoint); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-
-	// Log the update.
-	fmt.Printf("Updated %s to point to %s\n", record.Name, record.Content)
 }
