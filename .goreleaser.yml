@@ -23,7 +23,7 @@ builds:
         goarch: arm
 
 brews:
-  - github:
+  - tap:
       owner: wyattjoh
       name: homebrew-stable
     folder: Formula
