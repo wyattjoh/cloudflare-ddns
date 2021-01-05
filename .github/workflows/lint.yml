@@ -17,3 +17,7 @@ jobs:
       - uses: golangci/golangci-lint-action@v2
         with:
           version: v1.34
+      - uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: --snapshot --skip-publish --rm-dist
