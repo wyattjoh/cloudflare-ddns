@@ -20,8 +20,6 @@ jobs:
       - uses: golangci/golangci-lint-action@v2
         with:
           version: v1.34
-          # Show only new issues if it's a pull request.
-          only-new-issues: true
       - uses: goreleaser/goreleaser-action@v2
         with:
           version: latest

@@ -1,4 +1,4 @@
-name: Build
+name: Lint
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  release:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
