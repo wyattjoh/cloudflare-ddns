@@ -1,6 +1,6 @@
 module github.com/wyattjoh/cloudflare-ddns
 
-go 1.13
+go 1.15
 
 require (
 	github.com/cloudflare/cloudflare-go v0.13.7
