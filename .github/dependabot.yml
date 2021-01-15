@@ -1,0 +1,18 @@
+version: 2
+updates:
+  # Update Go dependencies if they're found daily.
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+      - "🚀 merge it!"
+  # Update Github Actions if they're found daily.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+      - "🚀 merge it!"
