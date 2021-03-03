@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -31,7 +32,10 @@ func Before(c *cli.Context) error {
 
 // Action will perform the update operation.
 func Action(c *cli.Context) error {
-	if err := UpdateDomain(c.String("key"), c.String("email"), c.String("domain"), c.String("ipendpoint")); err != nil {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := UpdateDomain(ctx, c.String("key"), c.String("email"), c.String("domain"), c.String("ipendpoint")); err != nil {
 		return cli.Exit(err.Error(), 1)
 	}
 
