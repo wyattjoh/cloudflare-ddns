@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -11,7 +12,7 @@ import (
 )
 
 // GetRecord fetches the record from the Cloudflare api.
-func GetRecord(api *cloudflare.API, domainName string) (*cloudflare.DNSRecord, error) {
+func GetRecord(ctx context.Context, api *cloudflare.API, domainName string) (*cloudflare.DNSRecord, error) {
 	// Split the domain name by periods.
 	splitDomainName := strings.Split(domainName, ".")
 
@@ -33,7 +34,7 @@ func GetRecord(api *cloudflare.API, domainName string) (*cloudflare.DNSRecord, e
 	logrus.WithField("zoneID", zoneID).Debug("got zone id")
 
 	// Print zone details
-	dnsRecords, err := api.DNSRecords(zoneID, cloudflare.DNSRecord{
+	dnsRecords, err := api.DNSRecords(ctx, zoneID, cloudflare.DNSRecord{
 		Name: domainName,
 	})
 	if err != nil {
@@ -73,7 +74,7 @@ func GetCurrentIP(ipEndpoint string) (string, error) {
 
 // UpdateDomain updates a given domain in a zone to match the current ip address
 // of the machine.
-func UpdateDomain(apiKey, apiEmail, domainNames, ipEndpoint string) error {
+func UpdateDomain(ctx context.Context, apiKey, apiEmail, domainNames, ipEndpoint string) error {
 	// Create the new Cloudflare api client.
 	api, err := cloudflare.New(apiKey, apiEmail)
 	if err != nil {
@@ -92,7 +93,7 @@ func UpdateDomain(apiKey, apiEmail, domainNames, ipEndpoint string) error {
 	splitDomainNames := strings.Split(domainNames, ",")
 	for _, domainName := range splitDomainNames {
 		// Get the record in question.
-		record, err := GetRecord(api, domainName)
+		record, err := GetRecord(ctx, api, domainName)
 		if err != nil {
 			return errors.Wrap(err, "could not get the DNS record")
 		}
@@ -100,7 +101,7 @@ func UpdateDomain(apiKey, apiEmail, domainNames, ipEndpoint string) error {
 		// Update the DNS record to include the new IP address.
 		record.Content = newIP
 
-		if err := api.UpdateDNSRecord(record.ZoneID, record.ID, *record); err != nil {
+		if err := api.UpdateDNSRecord(ctx, record.ZoneID, record.ID, *record); err != nil {
 			return errors.Wrap(err, "could not update the DNS record")
 		}
 
