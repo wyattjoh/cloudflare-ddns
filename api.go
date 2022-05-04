@@ -75,13 +75,6 @@ func GetCurrentIP(ipEndpoint string) (string, error) {
 // UpdateDomain updates a given domain in a zone to match the current ip address
 // of the machine.
 func UpdateDomain(ctx context.Context, api *cloudflare.API, domainNames, ipEndpoint string) error {
-	// // Create the new Cloudflare api client.
-	// cloudflare.NewWithAPIToken()
-	// api, err := cloudflare.New(apiKey, apiEmail)
-	// if err != nil {
-	// 	return errors.Wrap(err, "could not create the Cloudflare API client")
-	// }
-
 	// Get our current IP address.
 	newIP, err := GetCurrentIP(ipEndpoint)
 	if err != nil {
