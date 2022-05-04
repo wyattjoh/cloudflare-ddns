@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -35,7 +36,25 @@ func Action(c *cli.Context) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := UpdateDomain(ctx, c.String("key"), c.String("email"), c.String("domain"), c.String("ipendpoint")); err != nil {
+	var api *cloudflare.API
+
+	var err error
+
+	if c.String("token") != "" {
+		api, err = cloudflare.NewWithAPIToken(c.String("token"))
+		if err != nil {
+			return cli.Exit(err.Error(), 1)
+		}
+	} else if c.String("key") != "" && c.String("email") != "" {
+		api, err = cloudflare.New(c.String("key"), c.String("email"))
+		if err != nil {
+			return cli.Exit(err.Error(), 1)
+		}
+	} else {
+		return cli.Exit("either --key and --email or --token must be defined", 1)
+	}
+
+	if err := UpdateDomain(ctx, api, c.String("domain"), c.String("ipendpoint")); err != nil {
 		return cli.Exit(err.Error(), 1)
 	}
 
@@ -48,16 +67,19 @@ func main() {
 	app.Version = fmt.Sprintf("%v, commit %v, built at %v", version, commit, date)
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{
-			Name:     "key",
-			Required: true,
-			EnvVars:  []string{"CF_API_KEY"},
-			Usage:    "The Global (not CA) Cloudflare API Key generated on the \"My Account\" page.",
+			Name:    "token",
+			EnvVars: []string{"CF_API_TOKEN"},
+			Usage:   "The API Token that has the Zone.DNS permission for the specific zone.",
 		},
 		&cli.StringFlag{
-			Name:     "email",
-			Required: true,
-			EnvVars:  []string{"CF_API_EMAIL"},
-			Usage:    "Email address associated with your Cloudflare account.",
+			Name:    "key",
+			EnvVars: []string{"CF_API_KEY"},
+			Usage:   "The Global (not CA) Cloudflare API Key generated on the \"My Account\" page.",
+		},
+		&cli.StringFlag{
+			Name:    "email",
+			EnvVars: []string{"CF_API_EMAIL"},
+			Usage:   "Email address associated with your Cloudflare account.",
 		},
 		&cli.StringFlag{
 			Name:     "domain",

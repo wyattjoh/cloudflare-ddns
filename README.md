@@ -32,7 +32,10 @@ brew install wyattjoh/stable/cloudflare-ddns
 
 Configuration is specified in the environment or as command line arguments.
 
-- `-key` or `ENV['CF_API_KEY']` (_required_) - specify the Global (not CA) Cloudflare API Key generated on the ["My Account" page](https://www.cloudflare.com/a/account/my-account).
-- `-email` or `ENV['CF_API_EMAIL']` (_required_) - Email address associated with your Cloudflare account.
-- `-domain` or `ENV['CF_DOMAIN']` (_required_) - Comma separated domain names that should be updated. (i.e. mypage.example.com OR example.com)
-- `-ipendpoint` or `ENV['CF_IP_ENDPOINT']` (optional, default: `https://api.ipify.org`) - Alternative ip address service endpoint.
+- `--token` or `ENV['CF_API_TOKEN']` (_required_ if `--key` and `--email` not provided) - The API Token that has the Zone.DNS permission for the specific zone.
+- `--key` or `ENV['CF_API_KEY']` (_required_ if `--token` not provided) - specify the Global (not CA) Cloudflare API Key generated on the ["My Account" page](https://www.cloudflare.com/a/account/my-account).
+- `--email` or `ENV['CF_API_EMAIL']` (_required_ if `--token` not provided) - Email address associated with your Cloudflare account.
+- `--domain` or `ENV['CF_DOMAIN']` (_required_) - Comma separated domain names that should be updated. (i.e. mypage.example.com OR example.com)
+- `--ipendpoint` or `ENV['CF_IP_ENDPOINT']` (optional, default: `https://api.ipify.org`) - Alternative ip address service endpoint.
+
+Note: One of `--key` and `--email` or `--token` must be defined
