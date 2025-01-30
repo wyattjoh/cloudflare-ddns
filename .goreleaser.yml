@@ -1,32 +1,34 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+
 project_name: cloudflare-ddns
 
 builds:
   - binary: cloudflare-ddns
     goos:
-      - windows
-      - darwin
-      - linux
-      - freebsd
-      - openbsd
-      - solaris
+      - "windows"
+      - "darwin"
+      - "linux"
+      - "freebsd"
+      - "openbsd"
+      - "solaris"
     goarch:
-      - amd64
-      - 386
-      - arm
-      - arm64
+      - "amd64"
+      - "386"
+      - "arm"
+      - "arm64"
     goarm:
-      - 7
+      - "7"
     ignore:
-      - goos: darwin
-        goarch: 386
-      - goos: openbsd
-        goarch: arm
+      - goos: "darwin"
+        goarch: "386"
+      - goos: "openbsd"
+        goarch: "arm"
 
 brews:
-  - tap:
+  - repository:
       owner: wyattjoh
       name: homebrew-stable
-    folder: Formula
+    directory: Formula
     homepage: https://github.com/wyattjoh/cloudflare-ddns
     description: Cloudflare Dynamic DNS Updater
     test: |
