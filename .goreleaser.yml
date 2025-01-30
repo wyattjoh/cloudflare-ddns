@@ -38,10 +38,12 @@ brews:
 
 archives:
   - name_template: "{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-    format: tar.gz
+    formats:
+      - "tar.gz"
+      - "zip"
     format_overrides:
       - goos: windows
-        format: zip
+        formats: ["zip"]
     files:
       - LICENSE.md
       - README.md
