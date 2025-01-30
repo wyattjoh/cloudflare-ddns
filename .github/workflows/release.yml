@@ -19,7 +19,7 @@ jobs:
           go-version: "^1.23.5"
       - uses: golangci/golangci-lint-action@v6.2.0
         with:
-          version: v1.45.2
+          version: v1.63.4
       - name: Unit testing
         run: go test ./...
       - uses: goreleaser/goreleaser-action@v6.1.0
