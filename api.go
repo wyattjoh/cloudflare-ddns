@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -11,30 +11,36 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// GetRecord fetches the record from the Cloudflare api.
-func GetRecord(ctx context.Context, api *cloudflare.API, domainName string) (*cloudflare.DNSRecord, error) {
+func GetZoneID(ctx context.Context, api *cloudflare.API, domainName string) (string, error) {
 	// Split the domain name by periods.
 	splitDomainName := strings.Split(domainName, ".")
 
 	// The domain name must be at least 2 elements, a name and a tld.
 	if len(splitDomainName) < 2 {
-		return nil, errors.Errorf("%s did not contain a TLD", domainName)
+		return "", errors.Errorf("%s did not contain a TLD", domainName)
 	}
 
 	// Extract the zone name from the domain name. This should be the last two
 	// period delimitered strings.
 	zoneName := strings.Join(splitDomainName[len(splitDomainName)-2:], ".")
 
-	// Fetch the zone ID
-	zoneID, err := api.ZoneIDByName(zoneName) // Assuming example.com exists in your Cloudflare account already
+	zoneID, err := api.ZoneIDByName(zoneName)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not find zone by name")
+		return "", errors.Wrap(err, "could not find zone by name")
 	}
 
 	logrus.WithField("zoneID", zoneID).Debug("got zone id")
 
+	return zoneID, nil
+}
+
+// GetRecord fetches the record from the Cloudflare api.
+func GetRecord(ctx context.Context, api *cloudflare.API, zoneID, domainName string) (*cloudflare.DNSRecord, error) {
 	// Print zone details
-	dnsRecords, err := api.DNSRecords(ctx, zoneID, cloudflare.DNSRecord{
+	dnsRecords, _, err := api.ListDNSRecords(ctx, &cloudflare.ResourceContainer{
+		Type:       cloudflare.ZoneType,
+		Identifier: zoneID,
+	}, cloudflare.ListDNSRecordsParams{
 		Name: domainName,
 	})
 	if err != nil {
@@ -63,7 +69,7 @@ func GetCurrentIP(ipEndpoint string) (string, error) {
 	}
 	defer res.Body.Close()
 
-	data, err := ioutil.ReadAll(res.Body)
+	data, err := io.ReadAll(res.Body)
 	if err != nil {
 		return "", errors.Wrap(err, "could not read the output from the provider")
 	}
@@ -74,7 +80,7 @@ func GetCurrentIP(ipEndpoint string) (string, error) {
 
 // UpdateDomain updates a given domain in a zone to match the current ip address
 // of the machine.
-func UpdateDomain(ctx context.Context, api *cloudflare.API, domainNames, ipEndpoint string) error {
+func UpdateDomain(ctx context.Context, api *cloudflare.API, zoneID, domainNames, ipEndpoint string) error {
 	// Get our current IP address.
 	newIP, err := GetCurrentIP(ipEndpoint)
 	if err != nil {
@@ -87,7 +93,7 @@ func UpdateDomain(ctx context.Context, api *cloudflare.API, domainNames, ipEndpo
 	splitDomainNames := strings.Split(domainNames, ",")
 	for _, domainName := range splitDomainNames {
 		// Get the record in question.
-		record, err := GetRecord(ctx, api, domainName)
+		record, err := GetRecord(ctx, api, zoneID, domainName)
 		if err != nil {
 			return errors.Wrap(err, "could not get the DNS record")
 		}
@@ -95,7 +101,13 @@ func UpdateDomain(ctx context.Context, api *cloudflare.API, domainNames, ipEndpo
 		// Update the DNS record to include the new IP address.
 		record.Content = newIP
 
-		if err := api.UpdateDNSRecord(ctx, record.ZoneID, record.ID, *record); err != nil {
+		if _, err := api.UpdateDNSRecord(ctx, &cloudflare.ResourceContainer{
+			Type:       cloudflare.ZoneType,
+			Identifier: zoneID,
+		}, cloudflare.UpdateDNSRecordParams{
+			ID:      record.ID,
+			Content: newIP,
+		}); err != nil {
 			return errors.Wrap(err, "could not update the DNS record")
 		}
 

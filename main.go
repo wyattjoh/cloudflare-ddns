@@ -54,7 +54,12 @@ func Action(c *cli.Context) error {
 		return cli.Exit("either --key and --email or --token must be defined", 1)
 	}
 
-	if err := UpdateDomain(ctx, api, c.String("domain"), c.String("ipendpoint")); err != nil {
+	zoneID, err := GetZoneID(ctx, api, c.String("domain"))
+	if err != nil {
+		return cli.Exit(err.Error(), 1)
+	}
+
+	if err := UpdateDomain(ctx, api, zoneID, c.String("domain"), c.String("ipendpoint")); err != nil {
 		return cli.Exit(err.Error(), 1)
 	}
 
