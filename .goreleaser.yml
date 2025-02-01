@@ -3,8 +3,7 @@
 project_name: cloudflare-ddns
 version: 2
 builds:
-  - id: cloudflare-ddns-build
-    binary: cloudflare-ddns
+  - binary: cloudflare-ddns
     goos:
       - "windows"
       - "darwin"
@@ -26,9 +25,7 @@ builds:
         goarch: "arm"
 
 brews:
-  - ids:
-      - cloudflare-ddns-archive
-    repository:
+  - repository:
       owner: wyattjoh
       name: homebrew-stable
     directory: Formula
@@ -40,11 +37,8 @@ brews:
       bin.install "cloudflare-ddns"
 
 archives:
-  - id: cloudflare-ddns-archive
-    name_template: "{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-    formats:
-      - "tar.gz"
-      - "zip"
+  - name_template: "{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    formats: ["tar.gz"]
     format_overrides:
       - goos: windows
         formats: ["zip"]
