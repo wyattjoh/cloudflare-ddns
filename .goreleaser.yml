@@ -27,7 +27,7 @@ builds:
 
 brews:
   - ids:
-      - cloudflare-ddns-build
+      - cloudflare-ddns-archive
     repository:
       owner: wyattjoh
       name: homebrew-stable
