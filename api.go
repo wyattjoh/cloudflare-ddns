@@ -67,7 +67,7 @@ func GetCurrentIP(ipEndpoint string) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "could not get the current IP from the provider")
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	data, err := io.ReadAll(res.Body)
 	if err != nil {
